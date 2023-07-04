@@ -15,7 +15,7 @@ docker-compose up -d --build
 
 Wrong CREATE calculations:
 ``` 
- curl -X POST -H "Content-Type: application/json" -d '{"operation":"1+2*(32+12"} http://localhost:80/calculations -v 
+ curl -X POST -H "Content-Type: application/json" -d '{"operation":"1+2*(32+12"}' http://localhost:80/calculations -v 
 
 curl -X POST -H "Content-Type: application/json" -d '{"operation":"12 2*(32+12"}' http://localhost:80/calculations -v
 ```
