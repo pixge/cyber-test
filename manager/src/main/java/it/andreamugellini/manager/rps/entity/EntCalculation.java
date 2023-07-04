@@ -1,5 +1,9 @@
 package it.andreamugellini.manager.rps.entity;
 
+
+import java.util.Calendar;
+import java.util.Date;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -9,12 +13,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 public class EntCalculation {
 	
-    @Id  
-    
+    @Id      
     private String id;
-
     private String operation;    
-    private double result;
+    private Double result;
+    private Date creationDate = Calendar.getInstance().getTime();
+    private Date resultDate;
 	
     public String getId() {
 		return id;
@@ -30,13 +34,29 @@ public class EntCalculation {
 	public void setOperation(String operation) {
 		this.operation = operation;
 	}	
-	public double getResult() {
+	public Double getResult() {
 		return result;
 	}
-	public void setResult(double result) {
+	public void setResult(Double result) {
 		this.result = result;
 	}
-    
+
+	
+	public void setCreationDate(Date creationDate) {
+		this.creationDate = creationDate;
+	}
+	
+	public Date getCreationDate() {
+		return creationDate;
+	}
+	
+	public Date getResultDate() {
+		return resultDate;
+	}
+	
+	public void setResultDate(Date resultDate) {
+		this.resultDate = resultDate;
+	}
     
     
 

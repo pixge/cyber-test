@@ -1,7 +1,10 @@
 package it.andreamugellini.manager.ctrls;
 
+import java.util.regex.Pattern;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import it.andreamugellini.manager.rps.entity.EntCalculation;
+import it.andreamugellini.manager.ctrls.dto.DTOCalculation;
+import it.andreamugellini.manager.exc.ExWrongParameter;
 import it.andreamugellini.manager.srvs.SrvManager;
 
 @RestController
@@ -19,27 +23,44 @@ import it.andreamugellini.manager.srvs.SrvManager;
 public class CtrlManager {
 
 		@Autowired
-		private SrvManager service;	    
+		private SrvManager service;	 
+		
+		
+//		private final String pattern = "\\d+(\\.\\d+)?([-+*\\/%]\\d+(\\.\\d+)?)*"; 
 
 	    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	    public EntCalculation createCalculation(@RequestBody EntCalculation calculation) {
-	        return this.service.create(calculation);
+	    public ResponseEntity<DTOCalculation> createCalculation(@RequestBody DTOCalculation dto) {
+
+	    	
+	    	if(!ValidatorOperations.validate(dto.getOperation())) throw new ExWrongParameter("Operation not valid");
+	    	
+	    	DTOCalculation created = this.service.create(dto);
+	        return ResponseEntity.ok(created);
 	    }
 
 	    @GetMapping("/{id}")
-	    public EntCalculation getCalculationById(@PathVariable Long id) {
-	       return this.service.get(id);
-	    }
+	    public ResponseEntity<DTOCalculation>  getCalculationById(@PathVariable String id) {
+	        DTOCalculation getted = this.service.get(id);	        
+	        return ResponseEntity.ok(getted);
+
+	    }    
+	
 
 	    @PutMapping("/{id}")
-	    public EntCalculation updateCalculation(@PathVariable Long id, @RequestBody EntCalculation calculation) {
+	    public ResponseEntity<DTOCalculation>  updateCalculation(@PathVariable String id, @RequestBody DTOCalculation dto) {
 	       
-	        return this.service.update(id, calculation);
+	    	if(!ValidatorOperations.validate(dto.getOperation())) throw new ExWrongParameter("Operation not valid");
+	    	
+	         DTOCalculation updated = this.service.update(id, dto);	         
+		     return ResponseEntity.ok(updated);
+
 	    }
 
 	    @DeleteMapping("/{id}")
-	    public void deleteCalculation(@PathVariable Long id) {
-	        this.service.delete(id);
+	    public ResponseEntity<String>  deleteCalculation(@PathVariable String id) {
+	        
+	    	this.service.delete(id);
+	        return ResponseEntity.ok("");
 	    }
 	
 	

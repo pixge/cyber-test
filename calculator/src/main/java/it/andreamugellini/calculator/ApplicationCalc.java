@@ -12,7 +12,6 @@ public class ApplicationCalc {
 
 	public static void main(String[] args) {
 	    SpringApplication.run(ApplicationCalc.class, args);
-
 	}
 
 }

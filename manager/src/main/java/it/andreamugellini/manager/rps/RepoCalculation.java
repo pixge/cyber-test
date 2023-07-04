@@ -8,6 +8,6 @@ import it.andreamugellini.manager.rps.entity.EntCalculation;
 
 
 @Repository
-public interface RepoCalculation extends MongoRepository<EntCalculation, Long> {
+public interface RepoCalculation extends MongoRepository<EntCalculation, String> {
 
 }
