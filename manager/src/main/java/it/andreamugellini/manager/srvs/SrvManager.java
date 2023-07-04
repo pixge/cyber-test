@@ -55,7 +55,7 @@ public class SrvManager {
 
 		this.repoCalculation.save(c.get());
 
-		kafka.send("calculate", c.get());
+		kafka.send("evaluate-calc", c.get());
 
 		dto.setId(id);
 		return dto;
