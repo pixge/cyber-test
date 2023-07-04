@@ -16,9 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 import it.andreamugellini.calculator.cmp.bean.BeanCalculation;
 import jakarta.annotation.PostConstruct;
@@ -32,7 +30,7 @@ public class SrvCalcolator {
 	private ObjectMapper jsonMapper;
 	
 	
-	@Value("${endpoint.manager}")
+	@Value("${ENDPOINT_MANAGER}")
 	String ENDPOINT_MANAGER; 
 
 	

@@ -1,16 +1,15 @@
 version: '3.7'
 services:
-  mongodb:
+  mongodatase:
     image: mongo:latest
-    container_name: mongodb
+    container_name: mongodatase
     restart: always    
     ports:
-            - 27017:27017
+            - "127.0.0.1:27017:27017"
     volumes:
             - ./mongo/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
-        
-    
-
+    networks:
+      - cyber-network
 
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -19,19 +18,71 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - 22181:2181
+    networks:
+        - cyber-network
   
   kafka:
     image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
-      - 9092:9092
+      - 9092
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://kafka:9093
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+        - cyber-network
+
+    
+  manager:
+    depends_on:
+      - kafka
+      - mongodatase
+    build:
+      context: ./manager/
+      dockerfile: Dockerfile
+    ports:
+      - 8081
+    environment:
+      - MONGO_URL=mongodb://cyber:cyber@mongodatase:27017/cyber
+      - KAFKA_IP=kafka:9092  
+      - CALC_SERVER=calculator
+    networks:
+      - cyber-network
+
+
+  
+      
+  calculator:
+    depends_on:
+      - kafka      
+    build:
+      context: ./calculator/
+      dockerfile: Dockerfile
+    ports:
+      - 8082
+    environment:
+      - ENDPOINT_MANAGER=http://manager:8081/results     
+      - KAFKA_IP=kafka:9092        
+    networks:
+      - cyber-network
+  
+  
+  nginx:
+    image: nginx:alpine    
+    container_name: nginx
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+    ports:
+      - 80:80
+    networks:
+      - cyber-network
+
+networks:
+  cyber-network:
       
 
